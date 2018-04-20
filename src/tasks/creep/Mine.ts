@@ -1,8 +1,8 @@
 import Task from '../task';
 
-/** 
- * This task is assigned to the creeps that will mine energy. 
-*/
+/**
+ * This task is assigned to the creeps that will mine energy.
+ */
 export default class Mine extends Task {
     type: string = 'mine';
     id: string;
@@ -17,9 +17,8 @@ export default class Mine extends Task {
     }
 
     run(): void {
-
         const status = (<any>this.creep.memory).status;
-        if (status !== 'gathering' && this.creep.carry.energy === 0) { 
+        if (status !== 'gathering' && this.creep.carry.energy === 0) {
             (<any>this.creep.memory).status = 'gathering';
         } else if (status !== 'depositing' && this.creep.carry.energy === this.creep.carryCapacity) {
             (<any>this.creep.memory).status = 'depositing';
@@ -32,9 +31,8 @@ export default class Mine extends Task {
         }
     }
 
-
     collectEnergy(): void {
-        //TODO: Determine which source to hit.
+        // TODO: Determine which source to hit.
         // Can leverage Memory.source.$sourceID to see how many it can handle
         // will need to associate the creep with that source in memory as well
         // then find the applicable source from memory and direct to it
@@ -52,7 +50,7 @@ export default class Mine extends Task {
                 Memory['source'][target.id]['creeps'].push(this.creep);
             }
         }
-        
+
         const target = <Source>Game.getObjectById((<any>this.creep.memory).target.id);
         if(target && this.creep.harvest(target) == ERR_NOT_IN_RANGE) {
             this.creep.moveTo(target,  {visualizePathStyle: {stroke: '#ffff33'}});
@@ -60,10 +58,10 @@ export default class Mine extends Task {
     }
 
     dropOffEnergy(): void {
-        const dropoff = this.creep.room.find(FIND_STRUCTURES).filter(s => 
-        (s.structureType === STRUCTURE_CONTAINER && s.store.energy < s.storeCapacity)
-        ||  (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity)
-        ||  (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity));
+        const dropoff = this.creep.room.find(FIND_STRUCTURES).filter(s =>
+            (s.structureType === STRUCTURE_CONTAINER && s.store.energy < s.storeCapacity)
+            ||  (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity)
+            ||  (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity));
 
         if (dropoff.length > 0) {
             if(this.creep.transfer(dropoff[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {

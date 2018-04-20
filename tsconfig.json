@@ -11,6 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false
   },
+//  "files": [
+//    "./node_modules/**/*.d.ts"
+//  ],
   "exclude": [
     "node_modules"
   ]

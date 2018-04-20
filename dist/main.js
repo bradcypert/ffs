@@ -11,6 +11,7 @@ var Constants = {
     CPU_ADJUST: 0.05,
     CPU_BOOST: 0,
 };
+//# sourceMappingURL=Constants.js.map
 
 /**
  * The task queue is a simple buffer for running tasks.
@@ -58,6 +59,8 @@ var TaskQueue = /** @class */ (function () {
     return TaskQueue;
 }());
 
+//# sourceMappingURL=TaskQueue.js.map
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
@@ -90,9 +93,8 @@ var Task = /** @class */ (function () {
     return Task;
 }());
 
-/**
- * This task is assigned to creeps that transfer from containers to the spawn.
-*/
+//# sourceMappingURL=Task.js.map
+
 var Freight = /** @class */ (function (_super) {
     __extends(Freight, _super);
     function Freight(id, creep) {
@@ -118,9 +120,8 @@ var Freight = /** @class */ (function (_super) {
     return Freight;
 }(Task));
 
-/**
- * This task is assigned to the creeps that will mine energy.
-*/
+//# sourceMappingURL=Freight.js.map
+
 var Mine = /** @class */ (function (_super) {
     __extends(Mine, _super);
     function Mine(id, creep) {
@@ -147,7 +148,7 @@ var Mine = /** @class */ (function (_super) {
         }
     };
     Mine.prototype.collectEnergy = function () {
-        //TODO: Determine which source to hit.
+        // TODO: Determine which source to hit.
         // Can leverage Memory.source.$sourceID to see how many it can handle
         // will need to associate the creep with that source in memory as well
         // then find the applicable source from memory and direct to it
@@ -196,9 +197,8 @@ var Mine = /** @class */ (function (_super) {
     return Mine;
 }(Task));
 
-/**
- * This task is assigned to creeps that will build / upgrade
-*/
+//# sourceMappingURL=Mine.js.map
+
 var Build = /** @class */ (function (_super) {
     __extends(Build, _super);
     function Build(id, creep) {
@@ -268,6 +268,8 @@ var Build = /** @class */ (function (_super) {
     };
     return Build;
 }(Task));
+
+//# sourceMappingURL=Build.js.map
 
 // The scheduler decides what needs to happen and then creates tasks for it.
 var Scheduler = /** @class */ (function () {
@@ -378,6 +380,8 @@ var Scheduler = /** @class */ (function () {
     return Scheduler;
 }());
 
+//# sourceMappingURL=Scheduler.js.map
+
 var Kernel = /** @class */ (function () {
     function Kernel() {
     }
@@ -395,7 +399,10 @@ var Kernel = /** @class */ (function () {
     return Kernel;
 }());
 
+//# sourceMappingURL=Kernel.js.map
+
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
+// This utility uses source maps to get the line numbers and file names of the original, TS source code
 if (!Memory['source'])
     Memory['source'] = {};
 var loop = function () {
@@ -413,6 +420,7 @@ var loop = function () {
     Scheduler.createSchedule();
     Kernel.tick();
 };
+//# sourceMappingURL=main.js.map
 
 exports.loop = loop;
 //# sourceMappingURL=main.js.map
