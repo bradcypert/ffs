@@ -1,9 +1,10 @@
 // The scheduler decides what needs to happen and then creates tasks for it.
 import Constants from './Constants';
 import TaskQueue from './TaskQueue';
+
+import Build from 'tasks/creep/Build';
 import Freight from 'tasks/creep/Freight';
 import Mine from 'tasks/creep/Mine';
-import Build from 'tasks/creep/Build';
 
 export default class Scheduler {
     static getRooms(): {[p: string] : Room} {

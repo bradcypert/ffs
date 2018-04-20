@@ -61,6 +61,71 @@ class Task {
 }
 //# sourceMappingURL=Task.js.map
 
+class Build extends Task {
+    constructor(id, creep) {
+        super();
+        this.type = 'build';
+        this.id = id;
+        this.creep = creep;
+        this.targets = [];
+    }
+    run() {
+        // TODO: This is expensive, defer or cache this please.
+        this.targets = this.creep.room.find(FIND_CONSTRUCTION_SITES);
+        const status = this.creep.memory.status;
+        if (status !== 'gathering' && this.creep.carry.energy === 0) {
+            this.creep.memory.status = 'gathering';
+        }
+        else if (status !== 'building' && this.creep.carry.energy === this.creep.carryCapacity) {
+            this.creep.memory.status = 'building';
+        }
+        if (this.creep.memory.status === 'gathering') {
+            this.collectEnergy();
+        }
+        else {
+            if (this.targets.length > 0) {
+                this.goToConstructionSite();
+            }
+            else {
+                this.upgradeController();
+            }
+        }
+    }
+    collectEnergy() {
+        const dropoff = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTAINER
+            && s.store.energy > this.creep.carryCapacity);
+        if (dropoff.length > 0) {
+            if (this.creep.withdraw(dropoff[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(dropoff[0], { visualizePathStyle: { stroke: '#0000FF' } });
+            }
+        }
+        else {
+            // Manually Harvest it
+            const target = this.creep.room.find(FIND_SOURCES).pop();
+            if (target && this.creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffff33' } });
+            }
+        }
+    }
+    upgradeController() {
+        const controller = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTROLLER);
+        if (controller[0]) {
+            if (this.creep.upgradeController(controller[0]) == ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(controller[0], { visualizePathStyle: { stroke: '#ffffff' } });
+            }
+        }
+    }
+    goToConstructionSite() {
+        const targets = this.targets.filter((s) => s.progress < s.progressTotal);
+        if (targets.length > 0) {
+            if (this.creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#000099' } });
+            }
+        }
+    }
+}
+//# sourceMappingURL=Build.js.map
+
 class Freight extends Task {
     constructor(id, creep) {
         super();
@@ -102,9 +167,6 @@ const PathStyles = {
 };
 //# sourceMappingURL=index.js.map
 
-/**
- * This task is assigned to the creeps that will mine energy.
- */
 class Mine extends Task {
     constructor(id, creep) {
         super();
@@ -175,71 +237,7 @@ class Mine extends Task {
         }
     }
 }
-
-class Build extends Task {
-    constructor(id, creep) {
-        super();
-        this.type = 'build';
-        this.id = id;
-        this.creep = creep;
-        this.targets = [];
-    }
-    run() {
-        // TODO: This is expensive, defer or cache this please.
-        this.targets = this.creep.room.find(FIND_CONSTRUCTION_SITES);
-        const status = this.creep.memory.status;
-        if (status !== 'gathering' && this.creep.carry.energy === 0) {
-            this.creep.memory.status = 'gathering';
-        }
-        else if (status !== 'building' && this.creep.carry.energy === this.creep.carryCapacity) {
-            this.creep.memory.status = 'building';
-        }
-        if (this.creep.memory.status === 'gathering') {
-            this.collectEnergy();
-        }
-        else {
-            if (this.targets.length > 0) {
-                this.goToConstructionSite();
-            }
-            else {
-                this.upgradeController();
-            }
-        }
-    }
-    collectEnergy() {
-        const dropoff = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTAINER
-            && s.store.energy > this.creep.carryCapacity);
-        if (dropoff.length > 0) {
-            if (this.creep.withdraw(dropoff[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(dropoff[0], { visualizePathStyle: { stroke: '#0000FF' } });
-            }
-        }
-        else {
-            // Manually Harvest it
-            const target = this.creep.room.find(FIND_SOURCES).pop();
-            if (target && this.creep.harvest(target) == ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffff33' } });
-            }
-        }
-    }
-    upgradeController() {
-        const controller = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTROLLER);
-        if (controller[0]) {
-            if (this.creep.upgradeController(controller[0]) == ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(controller[0], { visualizePathStyle: { stroke: '#ffffff' } });
-            }
-        }
-    }
-    goToConstructionSite() {
-        const targets = this.targets.filter((s) => s.progress < s.progressTotal);
-        if (targets.length > 0) {
-            if (this.creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#000099' } });
-            }
-        }
-    }
-}
-//# sourceMappingURL=Build.js.map
+//# sourceMappingURL=Mine.js.map
 
 // The scheduler decides what needs to happen and then creates tasks for it.
 class Scheduler {
@@ -350,7 +348,6 @@ Scheduler.partMap = {
     'builder': [MOVE, WORK, CARRY],
     'worker': [MOVE, WORK, CARRY]
 };
-//# sourceMappingURL=Scheduler.js.map
 
 class Kernel {
     static tick() {

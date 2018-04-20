@@ -1,5 +1,6 @@
 import { PathStyles } from 'constants/index';
 import Task from '../task';
+import TickCache from 'services/TickCache';
 
 /**
  * This task is assigned to the creeps that will mine energy.
@@ -8,13 +9,11 @@ export default class Mine extends Task {
     type: string = 'mine';
     id: string;
     creep: Creep;
-    targets: Source[];
 
     constructor(id: string, creep: Creep) {
         super();
         this.id = id;
         this.creep = creep;
-        this.targets = creep.room.find(FIND_SOURCES);
     }
 
     run(): void {
