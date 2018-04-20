@@ -3,6 +3,7 @@
     "tslint:recommended"
   ],
   "rules": {
+    "arrow-parens": false,
     "quotemark": [true, "single"],
     "forin": false,
     "interface-name": [true, "never-prefix"],
@@ -15,7 +16,7 @@
     "no-any": false,
     "triple-equals": false,
     "no-namespace": [true, "allow-declarations"],
-    "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
+    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
     "variable-name": [
       true,
       "ban-keywords",
