@@ -1,8 +1,8 @@
 import Task from '../task';
 
-/** 
+/**
  * This task is assigned to creeps that transfer from containers to the spawn.
-*/
+ */
 export default class Freight extends Task {
     type: string = 'freight';
     id: string;
@@ -24,7 +24,6 @@ export default class Freight extends Task {
         }
     }
 
-
     collectEnergy(): void {
 
     }
@@ -32,5 +31,4 @@ export default class Freight extends Task {
     dropOffEnergy(): void {
 
     }
-
 }

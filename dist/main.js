@@ -11,133 +11,117 @@ var Constants = {
     CPU_ADJUST: 0.05,
     CPU_BOOST: 0,
 };
+//# sourceMappingURL=Constants.js.map
 
 /**
  * The task queue is a simple buffer for running tasks.
  * The kernel operates on values in the queue based on remaining CPU availability
  * and the Scheduler populates the queue based off the state of the game.
  */
-var TaskQueue = /** @class */ (function () {
-    function TaskQueue() {
-    }
+class TaskQueue {
     /**
      * Add a new task to the queue.
      * @param {Task} task
      */
-    TaskQueue.add = function (task) {
+    static add(task) {
         if (task) {
             this.queue.push(task);
         }
-    };
-    TaskQueue.hasTasks = function () {
+    }
+    static hasTasks() {
         return this.queue.length > 0;
-    };
+    }
     /**
      * Get and remove the next task from the queue.
      * Might be useful for deferring execution of high CPU tasks.
      */
-    TaskQueue.pop = function () {
+    static pop() {
         return this.queue.shift();
-    };
-    TaskQueue.peek = function () {
+    }
+    static peek() {
         return this.queue[0];
-    };
+    }
     /**
      * Process the next task in the queue.
      */
-    TaskQueue.process = function () {
-        var task = this.pop();
+    static process() {
+        const task = this.pop();
         if (task) {
             task.run();
         }
         else {
             console.log("Trying to process an empty queue. Error code: QUAILHOUND");
         }
-    };
-    TaskQueue.queue = [];
-    return TaskQueue;
-}());
-
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation. All rights reserved.
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-this file except in compliance with the License. You may obtain a copy of the
-License at http://www.apache.org/licenses/LICENSE-2.0
-
-THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-MERCHANTABLITY OR NON-INFRINGEMENT.
-
-See the Apache Version 2.0 License for specific language governing permissions
-and limitations under the License.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = Object.setPrototypeOf ||
-    ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-    function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    }
 }
+TaskQueue.queue = [];
+//# sourceMappingURL=TaskQueue.js.map
 
-var Task = /** @class */ (function () {
-    function Task() {
-    }
-    return Task;
-}());
+class Task {
+}
+//# sourceMappingURL=Task.js.map
 
-/**
- * This task is assigned to creeps that transfer from containers to the spawn.
-*/
-var Freight = /** @class */ (function (_super) {
-    __extends(Freight, _super);
-    function Freight(id, creep) {
-        var _this = _super.call(this) || this;
-        _this.type = 'freight';
-        _this.id = id;
-        _this.creep = creep;
-        _this.targets = creep.room.find(FIND_STRUCTURES).filter(function (s) { return s.structureType === STRUCTURE_CONTAINER; });
-        return _this;
+class Freight extends Task {
+    constructor(id, creep) {
+        super();
+        this.type = 'freight';
+        this.id = id;
+        this.creep = creep;
+        this.targets = creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTAINER);
     }
-    Freight.prototype.run = function () {
+    run() {
         if (this.creep.carry.energy < this.creep.carryCapacity) {
             this.collectEnergy();
         }
         else {
             this.dropOffEnergy();
         }
-    };
-    Freight.prototype.collectEnergy = function () {
-    };
-    Freight.prototype.dropOffEnergy = function () {
-    };
-    return Freight;
-}(Task));
+    }
+    collectEnergy() {
+    }
+    dropOffEnergy() {
+    }
+}
+//# sourceMappingURL=Freight.js.map
+
+const Colors = {
+    LIGHT_YELLOW: '#ffff33',
+    WHITE: '#ffffff',
+};
+const PathStyles = {
+    GATHERING_SOURCE: {
+        visualizePathStyle: {
+            stroke: Colors.LIGHT_YELLOW,
+        },
+    },
+    UPGRADING: {
+        visualizePathStyle: {
+            stroke: Colors.WHITE,
+        },
+    },
+};
+//# sourceMappingURL=index.js.map
 
 /**
  * This task is assigned to the creeps that will mine energy.
-*/
-var Mine = /** @class */ (function (_super) {
-    __extends(Mine, _super);
-    function Mine(id, creep) {
-        var _this = _super.call(this) || this;
-        _this.type = 'mine';
-        _this.id = id;
-        _this.creep = creep;
-        _this.targets = creep.room.find(FIND_SOURCES);
-        return _this;
+ */
+class Mine extends Task {
+    constructor(id, creep) {
+        super();
+        this.type = 'mine';
+        this.id = id;
+        this.creep = creep;
+        this.targets = creep.room.find(FIND_SOURCES);
     }
-    Mine.prototype.run = function () {
-        var status = this.creep.memory.status;
+    run() {
+        const status = this.creep.memory.status;
         if (status !== 'gathering' && this.creep.carry.energy === 0) {
             this.creep.memory.status = 'gathering';
+            this.creep.memory.target = null;
         }
         else if (status !== 'depositing' && this.creep.carry.energy === this.creep.carryCapacity) {
             this.creep.memory.status = 'depositing';
+            this.creep.memory.target = null;
         }
         if (this.creep.memory.status === 'gathering') {
             this.collectEnergy();
@@ -145,74 +129,65 @@ var Mine = /** @class */ (function (_super) {
         else {
             this.dropOffEnergy();
         }
-    };
-    Mine.prototype.collectEnergy = function () {
-        //TODO: Determine which source to hit.
+    }
+    collectEnergy() {
+        // TODO: Determine which source to hit.
         // Can leverage Memory.source.$sourceID to see how many it can handle
         // will need to associate the creep with that source in memory as well
         // then find the applicable source from memory and direct to it
-        if (!this.creep.memory.target) {
-            var target_1 = this.targets.sort(function (a, b) {
-                var aa = Memory['source'][a.id]['points'] + Memory['source'][a.id]['creeps'].length;
-                var bb = Memory['source'][b.id]['points'] + Memory['source'][b.id]['creeps'].length;
-                if (aa === bb)
-                    return 0;
-                if (aa < bb)
-                    return -1;
-                else
-                    return 1;
-            })[0];
-            if (target_1) {
-                this.creep.memory.target = target_1;
-                Memory['source'][target_1.id]['creeps'].push(this.creep);
+        const creepMem = this.creep.memory;
+        if (!creepMem.target) {
+            const target = this.creep.pos.findClosestByPath(FIND_SOURCES, {
+                filter(source) {
+                    const available = Memory['source'][source.id]['points'] - Memory['source'][source.id]['creeps'].length;
+                    return available > 0;
+                },
+            });
+            if (target) {
+                this.creep.memory.target = target;
+                Memory['source'][target.id]['creeps'].push(this.creep);
             }
         }
-        var target = Game.getObjectById(this.creep.memory.target.id);
+        const target = Game.getObjectById(this.creep.memory.target.id);
         if (target && this.creep.harvest(target) == ERR_NOT_IN_RANGE) {
-            this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffff33' } });
+            this.creep.moveTo(target, PathStyles.GATHERING_SOURCE);
         }
-    };
-    Mine.prototype.dropOffEnergy = function () {
-        var dropoff = this.creep.room.find(FIND_STRUCTURES).filter(function (s) {
-            return (s.structureType === STRUCTURE_CONTAINER && s.store.energy < s.storeCapacity)
+    }
+    dropOffEnergy() {
+        const dropoff = this.creep.room.find(FIND_STRUCTURES, {
+            filter: s => (s.structureType === STRUCTURE_CONTAINER && s.store.energy < s.storeCapacity)
                 || (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity)
-                || (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity);
+                || (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity),
         });
         if (dropoff.length > 0) {
             if (this.creep.transfer(dropoff[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(dropoff[0], { visualizePathStyle: { stroke: '#ffffff' } });
+                this.creep.moveTo(dropoff[0], PathStyles.UPGRADING);
             }
         }
         else {
             // Controllers are unique
-            var controller = this.creep.room.find(FIND_STRUCTURES).filter(function (s) { return s.structureType === STRUCTURE_CONTROLLER; });
+            const controller = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTROLLER);
             if (controller[0]) {
                 if (this.creep.upgradeController(controller[0]) == ERR_NOT_IN_RANGE) {
-                    this.creep.moveTo(controller[0], { visualizePathStyle: { stroke: '#ffffff' } });
+                    this.creep.moveTo(controller[0], PathStyles.UPGRADING);
                 }
             }
         }
-    };
-    return Mine;
-}(Task));
-
-/**
- * This task is assigned to creeps that will build / upgrade
-*/
-var Build = /** @class */ (function (_super) {
-    __extends(Build, _super);
-    function Build(id, creep) {
-        var _this = _super.call(this) || this;
-        _this.type = 'build';
-        _this.id = id;
-        _this.creep = creep;
-        _this.targets = [];
-        return _this;
     }
-    Build.prototype.run = function () {
+}
+
+class Build extends Task {
+    constructor(id, creep) {
+        super();
+        this.type = 'build';
+        this.id = id;
+        this.creep = creep;
+        this.targets = [];
+    }
+    run() {
         // TODO: This is expensive, defer or cache this please.
         this.targets = this.creep.room.find(FIND_CONSTRUCTION_SITES);
-        var status = this.creep.memory.status;
+        const status = this.creep.memory.status;
         if (status !== 'gathering' && this.creep.carry.energy === 0) {
             this.creep.memory.status = 'gathering';
         }
@@ -230,13 +205,10 @@ var Build = /** @class */ (function (_super) {
                 this.upgradeController();
             }
         }
-    };
-    Build.prototype.collectEnergy = function () {
-        var _this = this;
-        var dropoff = this.creep.room.find(FIND_STRUCTURES).filter(function (s) {
-            return s.structureType === STRUCTURE_CONTAINER
-                && s.store.energy > _this.creep.carryCapacity;
-        });
+    }
+    collectEnergy() {
+        const dropoff = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTAINER
+            && s.store.energy > this.creep.carryCapacity);
         if (dropoff.length > 0) {
             if (this.creep.withdraw(dropoff[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(dropoff[0], { visualizePathStyle: { stroke: '#0000FF' } });
@@ -244,90 +216,92 @@ var Build = /** @class */ (function (_super) {
         }
         else {
             // Manually Harvest it
-            var target = this.creep.room.find(FIND_SOURCES).pop();
+            const target = this.creep.room.find(FIND_SOURCES).pop();
             if (target && this.creep.harvest(target) == ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(target, { visualizePathStyle: { stroke: '#ffff33' } });
             }
         }
-    };
-    Build.prototype.upgradeController = function () {
-        var controller = this.creep.room.find(FIND_STRUCTURES).filter(function (s) { return s.structureType === STRUCTURE_CONTROLLER; });
+    }
+    upgradeController() {
+        const controller = this.creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTROLLER);
         if (controller[0]) {
             if (this.creep.upgradeController(controller[0]) == ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(controller[0], { visualizePathStyle: { stroke: '#ffffff' } });
             }
         }
-    };
-    Build.prototype.goToConstructionSite = function () {
-        var targets = this.targets.filter(function (s) { return s.progress < s.progressTotal; });
+    }
+    goToConstructionSite() {
+        const targets = this.targets.filter((s) => s.progress < s.progressTotal);
         if (targets.length > 0) {
             if (this.creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#000099' } });
             }
         }
-    };
-    return Build;
-}(Task));
+    }
+}
+//# sourceMappingURL=Build.js.map
 
 // The scheduler decides what needs to happen and then creates tasks for it.
-var Scheduler = /** @class */ (function () {
-    function Scheduler() {
-    }
-    Scheduler.getRooms = function () {
+class Scheduler {
+    static getRooms() {
         return Game.rooms;
-    };
-    Scheduler.createSchedule = function () {
-        var _this = this;
-        var rooms = _.values(this.getRooms());
-        _.forEach(rooms, function (room) {
-            _this.determineWorkload(room);
-            _this.delegateCreeps(room);
+    }
+    static createSchedule() {
+        let rooms = _.values(this.getRooms());
+        _.forEach(rooms, (room) => {
+            this.determineWorkload(room);
+            this.delegateCreeps(room);
         });
-    };
-    Scheduler.determineWorkload = function (room) {
-        var CIR = Scheduler.getCreepsInRoom(room);
-        var workersInRoom = CIR
-            .filter(function (c) { return c.memory.task === 'worker'; }).length;
-        var constructionPoints = Scheduler.getConstructionPoints(room).length;
-        var buildersInRoom = CIR
-            .filter(function (c) { return c.memory.task === 'builder'; }).length;
+    }
+    static determineWorkload(room) {
+        const CIR = Scheduler.getCreepsInRoom(room);
+        const workersInRoom = CIR
+            .filter(c => c.memory.task === 'worker').length;
+        const constructionPoints = Scheduler.getConstructionPoints(room).length;
+        const buildersInRoom = CIR
+            .filter(c => c.memory.task === 'builder').length;
         if (constructionPoints / Constants.CONSTRUCTION_POINTS_PER_BUILDER > buildersInRoom) {
             this.requisitionCreep('builder', room);
         }
-        var sources = room.find(FIND_SOURCES);
-        var unworkedSourcePoints = sources
+        const sources = room.find(FIND_SOURCES);
+        const unworkedSourcePoints = sources
             .map(Scheduler.getUnusedSourcePoints)
-            .map(function (e) { return e.points; })
-            .reduce(function (acc, val) { return acc + val; }, 0);
+            .map(e => e.points)
+            .reduce((acc, val) => acc + val, 0);
         if (unworkedSourcePoints > workersInRoom - sources.length) {
             this.requisitionCreep('worker', room);
         }
-    };
-    Scheduler.getConstructionPoints = function (room) {
+    }
+    static getConstructionPoints(room) {
         return room.find(FIND_MY_CONSTRUCTION_SITES);
-    };
-    Scheduler.getUnusedSourcePoints = function (source) {
+    }
+    static getUnusedSourcePoints(source) {
         if (!Memory['source'][source.id]) {
-            var x = source.pos.x;
-            var y = source.pos.y;
-            var room = source.pos.roomName;
-            var m = Game.map.getTerrainAt;
+            const x = source.pos.x;
+            const y = source.pos.y;
+            const room = source.pos.roomName;
+            // The total number of adjacent available points.
+            const points = Array.from({ length: 9 }, (_, i) => {
+                // TODO: move this into a util and do a for loop, incrementing a counter
+                // delta(x) (col) given by getting the modulus of the max, and then subtracting the middle
+                // delta(y) (row) given by dividing by the max, and then subtracting the middle.
+                const xd = i % 3 - 1;
+                const yd = Math.floor(i / 3 - 1);
+                return Game.map.getTerrainAt(x + xd, y - yd, room);
+            }).filter(_ => _ !== 'wall').length;
             Memory['source'][source.id] = {
-                points: [m(x - 1, y + 1, room), m(x, y + 1, room), m(x + 1, y + 1, room),
-                    m(x - 1, y, room), 'wall', m(x + 1, y, room),
-                    m(x - 1, y - 1, room), m(x, y - 1, room), m(x + 1, y - 1, room)].filter(function (s) { return s === 'wall'; }).length,
-                creeps: []
+                creeps: [],
+                points,
             };
         }
         return Memory['source'][source.id];
-    };
-    Scheduler.delegateCreeps = function (room) {
-        var _this = this;
-        var creeps = this.getCreepsInRoom(room);
-        _.forEach(creeps, function (creep) {
-            var memory = creep.memory;
+    }
+    static delegateCreeps(room) {
+        let creeps = this.getCreepsInRoom(room);
+        _.forEach(creeps, (creep) => {
+            let memory = creep.memory;
             if (!memory.hasOwnProperty('task')) {
-                creep.memory.task = _this.assignTaskByBodyParts(creep);
+                creep.memory.task = this.assignTaskByBodyParts(creep);
             }
             switch (creep.memory.task) {
                 case 'hauler':
@@ -341,78 +315,78 @@ var Scheduler = /** @class */ (function () {
                     break;
             }
         });
-    };
-    Scheduler.getCreepsInRoom = function (room) {
-        return _.values(Game.creeps).filter(function (c) { return c.room.name === room.name; });
-    };
-    Scheduler.assignTaskByBodyParts = function (creep) {
-        var counts = _.reduce(creep.body, function (acc, val) {
+    }
+    static getCreepsInRoom(room) {
+        return _.values(Game.creeps).filter((c) => c.room.name === room.name);
+    }
+    static assignTaskByBodyParts(creep) {
+        let counts = _.reduce(creep.body, (acc, val) => {
             acc[val.type] = (acc[val.type] || 0) + 1;
             return acc;
         }, {});
         delete counts.tough;
-        var keysSorted = Object.keys(counts).sort(function (a, b) { return counts[a] - counts[b]; });
+        let keysSorted = Object.keys(counts).sort(function (a, b) { return counts[a] - counts[b]; });
         return this.taskMap[keysSorted[0]];
-    };
-    Scheduler.requisitionCreep = function (type, room) {
-        var parts = this.partMap[type];
-        var spawner = room.find(FIND_MY_SPAWNS)
-            .filter(function (s) { return s.spawnCreep(parts, '', { dryRun: true }) && !s.spawning; })[0];
+    }
+    static requisitionCreep(type, room) {
+        const parts = this.partMap[type];
+        const spawner = room.find(FIND_MY_SPAWNS)
+            .filter((s) => s.spawnCreep(parts, '', { dryRun: true }) && !s.spawning)[0];
         if (spawner) {
             spawner.spawnCreep(parts, type + new Date().getUTCMilliseconds(), { memory: { task: type } });
         }
-    };
-    Scheduler.taskMap = {
-        'carry': 'hauler',
-        'move': 'builder',
-        'work': 'worker',
-        'attack': 'soldier',
-        'ranged_attack': 'soldier',
-        'heal': 'medic'
-    };
-    Scheduler.partMap = {
-        'hauler': [MOVE, CARRY, CARRY],
-        'builder': [MOVE, WORK, CARRY],
-        'worker': [MOVE, WORK, CARRY]
-    };
-    return Scheduler;
-}());
-
-var Kernel = /** @class */ (function () {
-    function Kernel() {
     }
-    Kernel.tick = function () {
+}
+Scheduler.taskMap = {
+    'carry': 'hauler',
+    'move': 'builder',
+    'work': 'worker',
+    'attack': 'soldier',
+    'ranged_attack': 'soldier',
+    'heal': 'medic'
+};
+Scheduler.partMap = {
+    'hauler': [MOVE, CARRY, CARRY],
+    'builder': [MOVE, WORK, CARRY],
+    'worker': [MOVE, WORK, CARRY]
+};
+//# sourceMappingURL=Scheduler.js.map
+
+class Kernel {
+    static tick() {
         while (TaskQueue.hasTasks()
             && this.CPUAvailable()) {
             TaskQueue.process();
         }
-    };
-    Kernel.CPUAvailable = function () {
-        var cpuUsed = Game.cpu.getUsed();
-        var cpuLimit = Game.cpu.limit;
+    }
+    static CPUAvailable() {
+        const cpuUsed = Game.cpu.getUsed();
+        const cpuLimit = Game.cpu.limit;
         return (cpuLimit - (Constants.CPU_BUFFER * Constants.CPU_ADJUST) > cpuUsed);
-    };
-    return Kernel;
-}());
+    }
+}
+//# sourceMappingURL=Kernel.js.map
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
+// This utility uses source maps to get the line numbers and file names of the original, TS source code
 if (!Memory['source'])
     Memory['source'] = {};
-var loop = function () {
-    console.log("Current game tick is " + Game.time);
+const loop = () => {
+    console.log(`Current game tick is ${Game.time}`);
     // should be moved into the source identification process
     if (Game.time % 25 === 0) {
         Memory['source'] = {};
     }
     // Automatically delete memory of missing creeps
-    for (var name_1 in Memory.creeps) {
-        if (!(name_1 in Game.creeps)) {
-            delete Memory.creeps[name_1];
+    for (const name in Memory.creeps) {
+        if (!(name in Game.creeps)) {
+            delete Memory.creeps[name];
         }
     }
     Scheduler.createSchedule();
     Kernel.tick();
 };
+//# sourceMappingURL=main.js.map
 
 exports.loop = loop;
 //# sourceMappingURL=main.js.map
