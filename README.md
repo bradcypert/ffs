@@ -4,6 +4,7 @@ FFS is a simple screeps operating system that takes an opinionated approach on f
 
 [![CodeFactor](https://www.codefactor.io/repository/github/bradcypert/ffs/badge)](https://www.codefactor.io/repository/github/bradcypert/ffs)
 [![CodeClimate](https://api.codeclimate.com/v1/badges/96af2e094e32349f9bbe/maintainability)](https://codeclimate.com/github/bradcypert/ffs/maintainability)
+[![Build Status](https://travis-ci.com/bradcypert/ffs.svg?branch=master)](https://travis-ci.com/bradcypert/ffs)
 
 ## Basic Usage
 
