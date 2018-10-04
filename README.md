@@ -34,3 +34,18 @@ The type definitions for Screeps come from [typed-screeps](https://github.com/sc
 
 ## General Flow
 ![Flow](./docs/Flow.png)
+
+## How it works
+This "operating system" works within the constraits provided by the Screeps game to ensure that we can schedule tasks and execute as many tasks as available within our cpu per tick.
+
+#### Scheduler
+Our scheduler takes care of determining what tasks need to be created and adds those tasks to the TaskQueue
+
+#### TaskQueue
+The TaskQueue is extremely simple. It's merely a queue!
+
+#### Kernel
+The Kernel is responsible for reading tasks from the queue and attempting to execute them if the kernel believes we have the CPU capacity to execute these tasks. Ideally, this Kernel will one day be aware of roughly how much CPU was used to execute each task the last time they were executed. The smarter the Kernel, the better our operating system.
+
+#### CPU Bucket
+The CPU bucket is provided by the game (Screeps). It is basically a monitor of how much CPU we have available. It's important to note that the CPU bucket can actually hold on to carry-over cpu from previous iterations. IE: If we are granted 10 and use 9, 1 would carry over. There is a limit to this, however.
