@@ -1,17 +1,17 @@
 // The scheduler decides what needs to happen and then creates tasks for it.
-import Constants from './Constants';
-import TaskQueue from './TaskQueue';
+import Build from 'tasks/creep/Build';
 import Freight from 'tasks/creep/Freight';
 import Mine from 'tasks/creep/Mine';
-import Build from 'tasks/creep/Build';
+import Constants from './Constants';
+import TaskQueue from './TaskQueue';
 
 export default class Scheduler {
-    static getRooms(): {[p: string] : Room} {
+    public static getRooms(): {[p: string]: Room} {
         return Game.rooms;
     }
 
-    static createSchedule() {
-        let rooms = _.values(this.getRooms());
+    public static createSchedule() {
+        const rooms = _.values(this.getRooms());
 
         _.forEach(rooms, (room: Room) => {
             this.determineWorkload(room);
@@ -19,16 +19,14 @@ export default class Scheduler {
         });
     }
 
-    static determineWorkload(room: Room) {
-        
-
+    private static determineWorkload(room: Room) {
         const CIR = Scheduler.getCreepsInRoom(room);
         const workersInRoom = CIR
-            .filter(c => (<any>c.memory).task === 'worker').length;
+            .filter(c => (c.memory as any).task === 'worker').length;
 
         const constructionPoints = Scheduler.getConstructionPoints(room).length;
         const buildersInRoom = CIR
-            .filter(c => (<any>c.memory).task === 'builder').length;
+            .filter(c => (c.memory as any).task === 'builder').length;
 
         if (constructionPoints / Constants.CONSTRUCTION_POINTS_PER_BUILDER > buildersInRoom) {
             this.requisitionCreep('builder', room);
@@ -45,36 +43,37 @@ export default class Scheduler {
         }
     }
 
-    static getConstructionPoints(room: Room) {
+    private static getConstructionPoints(room: Room) {
         return room.find(FIND_MY_CONSTRUCTION_SITES);
     }
 
-    static getUnusedSourcePoints(source: Source) {
+    private static getUnusedSourcePoints(source: Source) {
         if (!Memory['source'][source.id]) {
             const x = source.pos.x;
             const y = source.pos.y;
             const room = source.pos.roomName;
             const m = Game.map.getTerrainAt;
             Memory['source'][source.id] = {
-                points: [m(x-1, y+1, room), m(x, y+1, room), m(x+1, y+1, room),
-                        m(x-1, y, room), 'wall', m(x+1, y, room),
-                        m(x-1, y-1, room), m(x, y-1, room), m(x+1, y-1, room)].filter(s => s === 'wall').length,
-                creeps: []
-            }
+                creeps: [],
+                points: [m(x - 1, y + 1, room), m(x, y + 1, room), m(x + 1, y + 1, room),
+                        m(x - 1, y, room), 'wall', m(x + 1, y, room),
+                        m(x - 1, y - 1, room), m(x, y - 1, room), m(x + 1, y - 1, room)]
+                        .filter(s => s === 'wall').length
+            };
         }
-         return Memory['source'][source.id];
+        return Memory['source'][source.id];
     }
 
-    static delegateCreeps(room: Room) {
-        let creeps = this.getCreepsInRoom(room);
+    private static delegateCreeps(room: Room) {
+        const creeps = this.getCreepsInRoom(room);
 
         _.forEach(creeps, (creep: Creep) => {
-            let memory = creep.memory;
+            const memory = creep.memory;
             if (!memory.hasOwnProperty('task')) {
-                (<any>creep.memory).task = this.assignTaskByBodyParts(creep);
+                (creep.memory as any).task = this.assignTaskByBodyParts(creep);
             }
 
-            switch ((<any>creep.memory).task) {
+            switch ((creep.memory as any).task) {
                 case 'hauler':
                     TaskQueue.add(new Freight('0', creep));
                     break;
@@ -88,40 +87,40 @@ export default class Scheduler {
         });
     }
 
-    static getCreepsInRoom(room: Room): Creep[] {
-        return (<Creep[]>_.values(Game.creeps)).filter((c) => c.room.name === room.name);
+    private static getCreepsInRoom(room: Room): Creep[] {
+        return (_.values(Game.creeps) as Creep[]).filter((c) => c.room.name === room.name);
     }
 
-    static taskMap = {
-        'carry': 'hauler',
-        'move': 'builder',
-        'work': 'worker',
-        'attack': 'soldier',
-        'ranged_attack': 'soldier',
-        'heal': 'medic'
+    private static taskMap = {
+        attack: 'soldier',
+        carry: 'hauler',
+        heal: 'medic',
+        move: 'builder',
+        ranged_attack: 'soldier',
+        work: 'worker'
     };
 
-    static assignTaskByBodyParts(creep: Creep) {
-        let counts = _.reduce(creep.body, (acc: any, val) => {
+    private static assignTaskByBodyParts(creep: Creep) {
+        const counts = _.reduce(creep.body, (acc: any, val) => {
             acc[val.type] = (acc[val.type] || 0) + 1;
             return acc;
         }, {});
         delete counts.tough;
-        let keysSorted = Object.keys(counts).sort(function(a,b){return counts[a]-counts[b]});
-        return (<any>this.taskMap)[keysSorted[0]];
+        const keysSorted = Object.keys(counts).sort((a, b) => counts[a] - counts[b]);
+        return (this.taskMap as any)[keysSorted[0]];
     }
 
-    static partMap = {
-        'hauler': [MOVE, CARRY, CARRY],
-        'builder': [MOVE, WORK, CARRY],
-        'worker': [MOVE, WORK, CARRY]
+    private static partMap = {
+        builder: [MOVE, WORK, CARRY],
+        hauler: [MOVE, CARRY, CARRY],
+        worker: [MOVE, WORK, CARRY]
     };
-    static requisitionCreep(type: string, room: Room) {
-        const parts = (<any>this.partMap)[type];
+    private static requisitionCreep(type: string, room: Room) {
+        const parts = (this.partMap as any)[type];
         const spawner = room.find(FIND_MY_SPAWNS)
             .filter((s) => s.spawnCreep(parts, '', {dryRun: true}) && !s.spawning)[0];
         if (spawner) {
-            spawner.spawnCreep(parts, type+new Date().getUTCMilliseconds(), {memory: {task: type}});
+            spawner.spawnCreep(parts, type + new Date().getUTCMilliseconds(), {memory: {task: type}});
         }
     }
 }

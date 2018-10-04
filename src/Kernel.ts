@@ -3,7 +3,7 @@ import Constants from './Constants';
 
 export default class Kernel {
   public static tick() {
-      while(TaskQueue.hasTasks()
+      while (TaskQueue.hasTasks()
             && this.CPUAvailable()) {
           TaskQueue.process();
       }
