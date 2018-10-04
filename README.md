@@ -3,6 +3,7 @@
 FFS is a simple screeps operating system that takes an opinionated approach on fundamental tasks and processes that should be ran per cycle. It's currently self-sufficient up to RC3, but does need some love regarding future RC Levels and Rooms.
 
 [![CodeFactor](https://www.codefactor.io/repository/github/bradcypert/ffs/badge)](https://www.codefactor.io/repository/github/bradcypert/ffs)
+[![CodeClimate](https://api.codeclimate.com/v1/badges/96af2e094e32349f9bbe/maintainability)](https://codeclimate.com/github/bradcypert/ffs/maintainability)
 
 ## Basic Usage
 
