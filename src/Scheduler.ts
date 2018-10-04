@@ -4,6 +4,7 @@ import Freight from 'tasks/creep/Freight';
 import Mine from 'tasks/creep/Mine';
 import Constants from './Constants';
 import TaskQueue from './TaskQueue';
+import _ from 'lodash';
 
 export default class Scheduler {
     public static getRooms(): {[p: string]: Room} {
