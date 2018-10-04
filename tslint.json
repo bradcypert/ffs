@@ -4,10 +4,14 @@
   ],
   "rules": {
     "forin": false,
+    "arrow-parens": [false],
+    "quotemark": [true, "single"],
     "interface-name": [true, "never-prefix"],
     "member-ordering": [false],
     "no-console": [false],
     "no-namespace": [true, "allow-declarations"],
+    "no-string-literal": [false],
+    "no-shadowed-variable": [false],
     "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
     "variable-name": [
       true,

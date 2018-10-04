@@ -1,9 +1,9 @@
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-import Scheduler from 'Scheduler';
 import Kernel from 'Kernel';
+import Scheduler from 'Scheduler';
 
-if (!Memory['source']) Memory['source'] = {};
+if (!Memory['source']) { Memory['source'] = {}; }
 
 export const loop = () => {
   console.log(`Current game tick is ${Game.time}`);

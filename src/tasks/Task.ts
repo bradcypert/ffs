@@ -1,5 +1,5 @@
 export default abstract class Task {
-    abstract type: string;
-    abstract id: string;
-    abstract run(): void;
+    public abstract type: string;
+    public abstract id: string;
+    public abstract run(): void;
 }
