@@ -1,10 +1,10 @@
 // The scheduler decides what needs to happen and then creates tasks for it.
+import _ from 'lodash';
 import Build from 'tasks/creep/Build';
 import Freight from 'tasks/creep/Freight';
 import Mine from 'tasks/creep/Mine';
 import Constants from './Constants';
 import TaskQueue from './TaskQueue';
-import _ from 'lodash';
 
 export default class Scheduler {
     public static getRooms(): {[p: string]: Room} {
