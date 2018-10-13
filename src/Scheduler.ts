@@ -66,7 +66,7 @@ export default class Scheduler {
 
           Memory['source'][source.id] = {
             creeps: [],
-            points,
+            points
           };
         }
         return Memory['source'][source.id];
@@ -90,6 +90,9 @@ export default class Scheduler {
                     break;
                 case 'builder':
                     TaskQueue.add(new Build('0', creep));
+                    break;
+                default:
+                    console.log(`No valid task found for ${creep.id}`);
                     break;
             }
         });
