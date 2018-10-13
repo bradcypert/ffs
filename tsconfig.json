@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "ESNext",
-    "target": "es6",
+    "target": "es5",
     "outDir": "dist",
     "baseUrl": "src/",
     "sourceMap": true,

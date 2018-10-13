@@ -55,14 +55,18 @@ export default class Scheduler {
           const room = source.pos.roomName;
 
           // The total number of adjacent available points.
-          const points = Array.from({ length: 9 }, (_, i) => {
-            // TODO: move this into a util and do a for loop, incrementing a counter
+          let points = 0;
+          for (let i = 0; i < 9; i++) {
             // delta(x) (col) given by getting the modulus of the max, and then subtracting the middle
             // delta(y) (row) given by dividing by the max, and then subtracting the middle.
             const xd = i % 3 - 1;
             const yd = Math.floor(i / 3 - 1);
-            return Game.map.getTerrainAt(x + xd, y - yd, room);
-          }).filter(_ => _ !== 'wall').length;
+            const type = Game.map.getTerrainAt(x + xd, y - yd, room);
+
+            if (type !== 'wall') {
+              points++;
+            }
+          }
 
           Memory['source'][source.id] = {
             creeps: [],
