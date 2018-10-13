@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
+    "module": "ESNext",
+    "target": "es6",
     "outDir": "dist",
     "baseUrl": "src/",
     "sourceMap": true,
