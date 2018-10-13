@@ -3,38 +3,22 @@
     "tslint:recommended"
   ],
   "rules": {
-    "arrow-parens": false,
-    "quotemark": [true, "single"],
     "forin": false,
+    "arrow-parens": [false],
+    "quotemark": [true, "single"],
     "interface-name": [true, "never-prefix"],
     "member-ordering": [false],
-    "member-access": false,
     "no-console": [false],
-    "max-line-length": [false],
-    "no-string-literal": false,
-    "no-angle-bracket-type-assertion": false,
-    "no-any": false,
-    "triple-equals": false,
     "no-namespace": [true, "allow-declarations"],
-    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+    "no-string-literal": [false],
+    "no-shadowed-variable": [false],
+    "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
     "variable-name": [
       true,
       "ban-keywords",
       "check-format",
       "allow-pascal-case",
       "allow-leading-underscore"
-    ],
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-module",
-      "check-separator",
-      "check-rest-spread",
-      "check-type",
-      "check-type-operator",
-      "check-preblock"
     ]
   }
 }

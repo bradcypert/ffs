@@ -4,10 +4,10 @@ import Task from '../task';
  * This task is assigned to creeps that transfer from containers to the spawn.
  */
 export default class Freight extends Task {
-    type: string = 'freight';
-    id: string;
-    creep: Creep;
-    targets: any[];
+    public type: string = 'freight';
+    public id: string;
+    public creep: Creep;
+    public targets: any[];
 
     constructor(id: string, creep: Creep) {
         super();
@@ -16,7 +16,7 @@ export default class Freight extends Task {
         this.targets = creep.room.find(FIND_STRUCTURES).filter(s => s.structureType === STRUCTURE_CONTAINER);
     }
 
-    run(): void {
+    public run(): void {
         if (this.creep.carry.energy < this.creep.carryCapacity) {
             this.collectEnergy();
         } else {
@@ -24,11 +24,11 @@ export default class Freight extends Task {
         }
     }
 
-    collectEnergy(): void {
-
+    public collectEnergy(): void {
+        /** no op */
     }
 
-    dropOffEnergy(): void {
-
+    public dropOffEnergy(): void {
+        /** no op */
     }
 }
