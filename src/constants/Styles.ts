@@ -1,17 +1,17 @@
 export const Colors = {
     LIGHT_YELLOW: '#ffff33',
-    WHITE: '#ffffff',
+    WHITE: '#ffffff'
 };
 
 export const PathStyles = {
     GATHERING_SOURCE: {
         visualizePathStyle: {
-            stroke: Colors.LIGHT_YELLOW,
-        },
+            stroke: Colors.LIGHT_YELLOW
+        }
     },
     UPGRADING: {
         visualizePathStyle: {
-            stroke: Colors.WHITE,
-        },
-    },
+            stroke: Colors.WHITE
+        }
+    }
 };

@@ -1,5 +1,5 @@
 import TaskQueue from 'TaskQueue';
-import Constants from './Constants';
+import Constants from './constants/Constants';
 
 export default class Kernel {
   public static tick() {

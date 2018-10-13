@@ -10,7 +10,7 @@ let cfg;
 const i = process.argv.indexOf("--dest") + 1;
 if (i === 0) {
   console.log("No destination specified - code will be compiled but not uploaded");
-} else if (i >= process.argv.length) {
+} else if (i >= process.argv.length || (cfg = require("./screeps")[process.argv[i]]) == null) {
   throw new Error("Invalid upload destination");
 }
 

@@ -12,9 +12,6 @@
     "allowUnreachableCode": false,
     "noImplicitAny": false
   },
-//  "files": [
-//    "./node_modules/**/*.d.ts"
-//  ],
   "exclude": [
     "node_modules"
   ]

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import Build from 'tasks/creep/Build';
 import Freight from 'tasks/creep/Freight';
 import Mine from 'tasks/creep/Mine';
-import Constants from './Constants';
+import Constants from './constants/Constants';
 import TaskQueue from './TaskQueue';
 
 export default class Scheduler {

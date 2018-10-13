@@ -1,4 +1,4 @@
-import Constants from '../src/Constants';
+import Constants from '../src/constants/Constants';
 
 test('Expect the correct number of constants', () => {
   expect(Constants.CONSTRUCTION_POINTS_PER_BUILDER).toBe(10);
