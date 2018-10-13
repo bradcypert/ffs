@@ -50,17 +50,24 @@ export default class Scheduler {
 
     private static getUnusedSourcePoints(source: Source) {
         if (!Memory['source'][source.id]) {
-            const x = source.pos.x;
-            const y = source.pos.y;
-            const room = source.pos.roomName;
-            const m = Game.map.getTerrainAt;
-            Memory['source'][source.id] = {
-                creeps: [],
-                points: [m(x - 1, y + 1, room), m(x, y + 1, room), m(x + 1, y + 1, room),
-                        m(x - 1, y, room), 'wall', m(x + 1, y, room),
-                        m(x - 1, y - 1, room), m(x, y - 1, room), m(x + 1, y - 1, room)]
-                        .filter(s => s === 'wall').length
-            };
+          const x = source.pos.x;
+          const y = source.pos.y;
+          const room = source.pos.roomName;
+
+          // The total number of adjacent available points.
+          const points = Array.from({ length: 9 }, (_, i) => {
+            // TODO: move this into a util and do a for loop, incrementing a counter
+            // delta(x) (col) given by getting the modulus of the max, and then subtracting the middle
+            // delta(y) (row) given by dividing by the max, and then subtracting the middle.
+            const xd = i % 3 - 1;
+            const yd = Math.floor(i / 3 - 1);
+            return Game.map.getTerrainAt(x + xd, y - yd, room);
+          }).filter(_ => _ !== 'wall').length;
+
+          Memory['source'][source.id] = {
+            creeps: [],
+            points
+          };
         }
         return Memory['source'][source.id];
     }

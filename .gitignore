@@ -10,6 +10,7 @@ node_modules/
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+.scripts/
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
