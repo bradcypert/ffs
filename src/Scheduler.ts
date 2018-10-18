@@ -61,9 +61,9 @@ export default class Scheduler {
             // delta(y) (row) given by dividing by the max, and then subtracting the middle.
             const xd = i % 3 - 1;
             const yd = Math.floor(i / 3 - 1);
-            const type = Game.map.getTerrainAt(x + xd, y - yd, room);
+            const type = Game.map.getRoomTerrain(room).get(x + xd, y - yd);
 
-            if (type !== 'wall') {
+            if (type !== TERRAIN_MASK_WALL) {
               points++;
             }
           }
