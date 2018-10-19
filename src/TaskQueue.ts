@@ -6,7 +6,7 @@ import Task from './tasks/Task';
  * and the Scheduler populates the queue based off the state of the game.
  */
 export default class TaskQueue {
-    private static queue: Task[] = [];
+    public static queue: Task[] = [];
 
     /**
      * Add a new task to the queue.
@@ -32,6 +32,13 @@ export default class TaskQueue {
 
     public static peek(): Task | null {
         return this.queue[0];
+    }
+
+    /**
+     * Entirely clears the queue.
+     */
+    public static clear(): void {
+        this.queue = [];
     }
 
     /**
