@@ -5,6 +5,8 @@
   "main": "index.js",
   "//": "If you add or change the names of destinations in screeps.json, make sure you update these scripts to reflect the changes",
   "scripts": {
+    "start": "npm run watch-main",
+    "deploy": "./.scripts/deploy.sh",
     "lint": "tslint \"src/**/*.ts\"",
     "push-main": "rollup -c --dest main",
     "push-pserver": "rollup -c --dest pserver",
@@ -27,7 +29,7 @@
   "devDependencies": {
     "@types/jest": "^23.3.3",
     "@types/lodash": "^4.14.116",
-    "@types/screeps": "^2.4.1",
+    "@types/screeps": "^2.5.1",
     "jest": "^23.6.0",
     "rollup": "^0.66.4",
     "rollup-plugin-clean": "^1.0.0",
