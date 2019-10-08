@@ -8,6 +8,7 @@ export default class Build extends Task {
     public id: string;
     public creep: Creep;
     public targets: Array<ConstructionSite<BuildableStructureConstant>>;
+    public repairTargets: AnyOwnedStructure[] = [];
 
     constructor(id: string, creep: Creep) {
         super();
@@ -18,6 +19,7 @@ export default class Build extends Task {
 
     public run(): void {
         // TODO: This is expensive, defer or cache this please.
+        this.repairTargets = this.creep.room.find(FIND_MY_STRUCTURES).filter(e => e.hits > e.hitsMax / 2);
         this.targets = this.creep.room.find(FIND_CONSTRUCTION_SITES);
         const status = (this.creep.memory as any).status;
         if (status !== 'gathering' && this.creep.carry.energy === 0) {
@@ -28,7 +30,7 @@ export default class Build extends Task {
         if ((this.creep.memory as any).status === 'gathering') {
             this.collectEnergy();
         } else {
-            if (this.targets.length > 0) {
+            if (this.targets.length + this.repairTargets.length > 0) {
                 this.goToConstructionSite();
             } else {
                 this.upgradeController();
@@ -68,6 +70,10 @@ export default class Build extends Task {
         if (targets.length > 0) {
             if (this.creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#000099'}});
+            }
+        } else if (this.repairTargets.length > 0) {
+            if (this.creep.repair(this.repairTargets[0]) === ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(this.repairTargets[0], {visualizePathStyle: {stroke: '#000099'}});
             }
         }
     }
