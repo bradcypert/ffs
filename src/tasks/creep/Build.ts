@@ -67,7 +67,7 @@ export default class Build extends Task {
 
     public goToConstructionSite(): void {
         const targets = this.targets.filter((s) => s.progress < s.progressTotal);
-        const repairs = this.repairTargets.filter(e => e.structureType !== STRUCTURE_SPAWN);
+        const repairs = this.repairTargets.filter(e => e.structureType !== STRUCTURE_SPAWN && e.structureType !== STRUCTURE_CONTROLLER);
         if (targets.length > 0) {
             if (this.creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
                 this.creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#000099'}});
