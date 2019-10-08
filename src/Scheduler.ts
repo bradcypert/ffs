@@ -54,7 +54,7 @@ export default class Scheduler {
     }
 
     private static getUnusedSourcePoints(source: Source) {
-        if (!Memory['source'][source.id]) {
+        if (!(Memory as any)['source'][source.id]) {
           const x = source.pos.x;
           const y = source.pos.y;
           const room = source.pos.roomName;
@@ -73,12 +73,12 @@ export default class Scheduler {
             }
           }
 
-          Memory['source'][source.id] = {
+          (Memory as any)['source'][source.id] = {
             creeps: [],
             points
           };
         }
-        return Memory['source'][source.id];
+        return (Memory as any)['source'][source.id];
     }
 
     private static delegateCreeps(room: Room) {
