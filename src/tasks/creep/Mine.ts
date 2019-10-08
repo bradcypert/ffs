@@ -39,15 +39,15 @@ export default class Mine extends Task {
         // then find the applicable source from memory and direct to it
         if (!(this.creep.memory as any).target) {
             const target = this.targets.sort((a, b) => {
-                const aa = Memory['source'][a.id]['points'] + Memory['source'][a.id]['creeps'].length;
-                const bb = Memory['source'][b.id]['points'] + Memory['source'][b.id]['creeps'].length;
+                const aa = (Memory as any)['source'][a.id]['points'] + (Memory as any)['source'][a.id]['creeps'].length;
+                const bb = (Memory as any)['source'][b.id]['points'] + (Memory as any)['source'][b.id]['creeps'].length;
                 if (aa === bb) { return 0; }
                 if (aa < bb) { return -1; } else { return 1; }
             })[0];
 
             if (target) {
                 (this.creep.memory as any).target = target;
-                Memory['source'][target.id]['creeps'].push(this.creep);
+                (Memory as any)['source'][target.id]['creeps'].push(this.creep);
             }
         }
 

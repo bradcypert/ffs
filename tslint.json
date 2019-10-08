@@ -3,6 +3,7 @@
     "tslint:recommended"
   ],
   "rules": {
+    "max-line-length":false,
     "forin": false,
     "arrow-parens": [false],
     "quotemark": [true, "single"],

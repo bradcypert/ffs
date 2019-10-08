@@ -26,10 +26,11 @@ export default class Scheduler {
             .filter(c => (c.memory as any).task === 'worker').length;
 
         const constructionPoints = Scheduler.getConstructionPoints(room).length;
+        const repairPoints = Scheduler.getRepairPoints(room).length;
         const buildersInRoom = CIR
             .filter(c => (c.memory as any).task === 'builder').length;
 
-        if (constructionPoints / Constants.CONSTRUCTION_POINTS_PER_BUILDER > buildersInRoom) {
+        if ((constructionPoints + repairPoints) / Constants.CONSTRUCTION_POINTS_PER_BUILDER > buildersInRoom) {
             this.requisitionCreep('builder', room);
         }
 
@@ -48,8 +49,12 @@ export default class Scheduler {
         return room.find(FIND_MY_CONSTRUCTION_SITES);
     }
 
+    private static getRepairPoints(room: Room) {
+        return room.find(FIND_MY_STRUCTURES).filter(e => e.hits > e.hitsMax / 2);
+    }
+
     private static getUnusedSourcePoints(source: Source) {
-        if (!Memory['source'][source.id]) {
+        if (!(Memory as any)['source'][source.id]) {
           const x = source.pos.x;
           const y = source.pos.y;
           const room = source.pos.roomName;
@@ -68,12 +73,12 @@ export default class Scheduler {
             }
           }
 
-          Memory['source'][source.id] = {
+          (Memory as any)['source'][source.id] = {
             creeps: [],
             points
           };
         }
-        return Memory['source'][source.id];
+        return (Memory as any)['source'][source.id];
     }
 
     private static delegateCreeps(room: Room) {

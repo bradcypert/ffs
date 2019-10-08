@@ -3,14 +3,14 @@
 import Kernel from 'Kernel';
 import Scheduler from 'Scheduler';
 
-if (!Memory['source']) { Memory['source'] = {}; }
+if (!(Memory as any)['source']) { (Memory as any)['source'] = {}; }
 
 export const loop = () => {
   console.log(`Current game tick is ${Game.time}`);
 
   // should be moved into the source identification process
   if (Game.time % 25 === 0) {
-    Memory['source'] = {};
+    (Memory as any)['source'] = {};
   }
 
   // Automatically delete memory of missing creeps

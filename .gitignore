@@ -6,6 +6,9 @@
 .rpt2_cache/
 node_modules/
 
+dist/
+main.js
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
