@@ -58,10 +58,11 @@ export default class Mine extends Task {
     }
 
     public dropOffEnergy(): void {
-        const dropoff = this.creep.room.find(FIND_STRUCTURES).filter(s =>
-        (s.structureType === STRUCTURE_CONTAINER && s.store.energy < s.storeCapacity)
-        ||  (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity)
-        ||  (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity));
+        const dropoff = this.creep.room.find(FIND_STRUCTURES, {filter: s =>
+            (s.structureType === STRUCTURE_CONTAINER && s.store.energy < s.storeCapacity)
+            ||  (s.structureType === STRUCTURE_SPAWN && s.energy < s.energyCapacity)
+            ||  (s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity)
+            ||  (s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity)});
 
         if (dropoff.length > 0) {
             if (this.creep.transfer(dropoff[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {

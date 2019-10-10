@@ -7,20 +7,18 @@ export default class Build extends Task {
     public type: string = 'build';
     public id: string;
     public creep: Creep;
-    public targets: Array<ConstructionSite<BuildableStructureConstant>>;
-    public repairTargets: AnyStructure[] = [];
+    public building: ConstructionSite<BuildableStructureConstant> | null;
+    public repairing: AnyStructure | null;
 
     constructor(id: string, creep: Creep) {
         super();
         this.id = id;
         this.creep = creep;
-        this.targets = [];
+        this.building = null;
+        this.repairing = null;
     }
 
     public run(): void {
-        // TODO: This is expensive, defer or cache this please.
-        this.repairTargets = this.creep.room.find(FIND_STRUCTURES, {filter: ((e: Structure) => e.hits < e.hitsMax / 2)});
-        this.targets = this.creep.room.find(FIND_CONSTRUCTION_SITES);
         const status = (this.creep.memory as any).status;
         if (status !== 'gathering' && this.creep.carry.energy === 0) {
             (this.creep.memory as any).status = 'gathering';
@@ -30,12 +28,41 @@ export default class Build extends Task {
         if ((this.creep.memory as any).status === 'gathering') {
             this.collectEnergy();
         } else {
-            if ((this.targets.length + this.repairTargets.length) > 0) {
+            this.determineWorkload();
+            if (this.repairing || this.building) {
                 this.goToConstructionSite();
             } else {
                 this.upgradeController();
             }
         }
+    }
+
+    private determineWorkload(): void {
+        const memRepair = (this.creep.memory as any).repairing || {};
+        const memBuild = (this.creep.memory as any).building || {};
+
+        this.building = Game.getObjectById(memBuild.id);
+        this.repairing = Game.getObjectById(memRepair.id);
+
+        if (Game.time % 25 === 0) {
+            this.building = null;
+            this.repairing = null;
+        }
+
+        if (!this.repairing || this.repairing.hits > this.repairing.hitsMax / 2) {
+            const repairTargets = this.creep.room.find(FIND_STRUCTURES,
+                {filter: ((e: Structure) => (e.hits < e.hitsMax / 2) && e.structureType !== STRUCTURE_SPAWN && e.structureType !== STRUCTURE_CONTROLLER)}
+            ).sort((a, b) => (a.hits / a.hitsMax) - (b.hits / b.hitsMax));
+            this.repairing = repairTargets[0];
+        }
+
+        if (!this.building || this.building.progress >= this.building.progressTotal) {
+            const targets = this.creep.room.find(FIND_CONSTRUCTION_SITES, {filter: (s) => s.progress < s.progressTotal });
+            this.building = targets[0];
+        }
+
+        (this.creep.memory as any).building = this.building;
+        (this.creep.memory as any).repairing = this.repairing;
     }
 
     public collectEnergy(): void {
@@ -66,16 +93,13 @@ export default class Build extends Task {
     }
 
     public goToConstructionSite(): void {
-        const targets = this.targets.filter((s) => s.progress < s.progressTotal);
-        const repairs = this.repairTargets.filter(e => e.structureType !== STRUCTURE_SPAWN && e.structureType !== STRUCTURE_CONTROLLER);
-        if (targets.length > 0) {
-            if (this.creep.build(targets[0]) === ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#000099'}});
+        if (this.building) {
+            if (this.creep.build(this.building) === ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(this.building, {visualizePathStyle: {stroke: '#000099'}});
             }
-        } else if (repairs.length > 0) {
-            console.log(repairs[0]);
-            if (this.creep.repair(repairs[0]) === ERR_NOT_IN_RANGE) {
-                this.creep.moveTo(repairs[0], {visualizePathStyle: {stroke: '#000099'}});
+        } else if (this.repairing) {
+            if (this.creep.repair(this.repairing) === ERR_NOT_IN_RANGE) {
+                this.creep.moveTo(this.repairing, {visualizePathStyle: {stroke: '#000099'}});
             }
         }
     }
