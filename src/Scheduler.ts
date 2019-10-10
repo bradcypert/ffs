@@ -129,9 +129,11 @@ export default class Scheduler {
 
     private static partMap = {
         builder: [MOVE, WORK, CARRY],
+        claimer: [MOVE, CLAIM],
         hauler: [MOVE, CARRY, CARRY],
         worker: [MOVE, WORK, CARRY]
     };
+
     private static requisitionCreep(type: string, room: Room) {
         const parts = (this.partMap as any)[type];
         const spawner = room.find(FIND_MY_SPAWNS)
