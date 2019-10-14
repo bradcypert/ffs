@@ -3,6 +3,7 @@ import _ from 'lodash';
 import Build from 'tasks/creep/Build';
 import Freight from 'tasks/creep/Freight';
 import Mine from 'tasks/creep/Mine';
+import Universal from 'tasks/tower/universal';
 import Constants from './Constants';
 import TaskQueue from './TaskQueue';
 
@@ -16,12 +17,13 @@ export default class Scheduler {
 
         _.forEach(rooms, (room: Room) => {
             this.determineWorkload(room);
+            this.delegateTowers(room);
             this.delegateCreeps(room);
         });
     }
 
     private static determineWorkload(room: Room) {
-        const CIR = Scheduler.getCreepsInRoom(room);
+        const CIR = room.find(FIND_MY_CREEPS);
         const workersInRoom = CIR
             .filter(c => (c.memory as any).task === 'worker').length;
 
@@ -82,7 +84,7 @@ export default class Scheduler {
     }
 
     private static delegateCreeps(room: Room) {
-        const creeps = this.getCreepsInRoom(room);
+        const creeps = room.find(FIND_MY_CREEPS);
 
         _.forEach(creeps, (creep: Creep) => {
             const memory = creep.memory;
@@ -104,8 +106,12 @@ export default class Scheduler {
         });
     }
 
-    private static getCreepsInRoom(room: Room): Creep[] {
-        return (_.values(Game.creeps) as Creep[]).filter((c) => c.room.name === room.name);
+    private static delegateTowers(room: Room) {
+        const towers: StructureTower[] = (room.find(FIND_MY_STRUCTURES, {filter: (e) => e.structureType === STRUCTURE_TOWER}) as StructureTower[]);
+
+        _.forEach(towers, (tower: StructureTower) => {
+            TaskQueue.add(new Universal('0', tower));
+        });
     }
 
     private static taskMap = {
