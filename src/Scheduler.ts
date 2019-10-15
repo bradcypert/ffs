@@ -32,8 +32,17 @@ export default class Scheduler {
         const buildersInRoom = CIR
             .filter(c => (c.memory as any).task === 'builder').length;
 
+        const haulersInRoom = CIR
+            .filter(c => (c.memory as any).task === 'hauler').length;
+
         if ((constructionPoints + repairPoints) / Constants.CONSTRUCTION_POINTS_PER_BUILDER > buildersInRoom) {
             this.requisitionCreep('builder', room);
+        }
+
+        const storage = room.find(FIND_STRUCTURES, {filter: (e) => e.structureType === STRUCTURE_STORAGE});
+        // TODO: no hard values, use a constant or similar
+        if (storage.length > 0 && haulersInRoom < 2) {
+            this.requisitionCreep('hauler', room);
         }
 
         const sources = room.find(FIND_SOURCES);
@@ -136,7 +145,7 @@ export default class Scheduler {
     private static partMap = {
         builder: [MOVE, WORK, CARRY],
         claimer: [MOVE, CLAIM],
-        hauler: [MOVE, CARRY, CARRY],
+        hauler: [MOVE, MOVE, CARRY, CARRY, WORK],
         worker: [MOVE, WORK, CARRY]
     };
 

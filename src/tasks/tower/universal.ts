@@ -44,8 +44,8 @@ export default class Universal extends Task {
 
         const damaged = this.tower.room.find(FIND_MY_STRUCTURES, {filter: (e) => e.hits < e.hitsMax});
         if (damaged.length > 0) {
-            const sorted = damaged.sort((a, b) => a.hits - b.hits);
-            this.tower.repair(sorted[0]);
+            // const sorted = damaged.sort((a, b) => a.hits - b.hits);
+            // this.tower.repair(sorted[0]);
             return;
         }
     }
