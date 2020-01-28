@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/screepers/screeps-typescript-starter#readme",
   "devDependencies": {
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^25.1.0",
     "@types/lodash": "^4.14.142",
     "@types/screeps": "^2.5.4",
     "jest": "^24.9.0",
