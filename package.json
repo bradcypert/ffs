@@ -31,7 +31,7 @@
     "@types/lodash": "^4.14.142",
     "@types/screeps": "^2.5.4",
     "jest": "^24.9.0",
-    "rollup": "^0.66.4",
+    "rollup": "^2.26.8",
     "rollup-plugin-clean": "^1.0.0",
     "rollup-plugin-commonjs": "^9.1.8",
     "rollup-plugin-node-resolve": "^3.4.0",
