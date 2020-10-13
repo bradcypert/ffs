@@ -29,7 +29,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.142",
-    "@types/screeps": "^2.5.4",
+    "@types/screeps": "^3.2.1",
     "jest": "^24.9.0",
     "rollup": "^0.66.4",
     "rollup-plugin-clean": "^1.0.0",
